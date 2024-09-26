@@ -1,0 +1,30 @@
+{
+  "name": "jsharmony-ai",
+  "version": "1.0.0",
+  "description": "jsHarmony AI Extensions",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "jsHarmony",
+    "AI",
+    "Artificial",
+    "Intelligence",
+    "Chat",
+    "Bot",
+    "OpenAI",
+    "Vector",
+    "Database",
+    "Embedding",
+    "Prompt"
+  ],
+  "author": "apHarmony <contact@apharmony.com> (http://www.apharmony.com/)",
+  "license": "LGPL-3.0",
+  "dependencies": {
+    "@orama/orama": "^2.0.21",
+    "jsharmony": "^1.33.0",
+    "lodash": "^4.17.21",
+    "openai": "^4.51.0"
+  }
+}

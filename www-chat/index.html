@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Chat</title>
+  <style type="text/css">
+    html, body { padding: 0; margin: 0; }
+    html, body, input, button { font-family: Calibri, Arial, Sans-Serif; font-size: 0.8; }
+    input { font-size: 1.03em; }
+    button { font-size: 1em; padding-right: 10px; padding-left: 10px; }
+    h1 { margin: 5px 0 12px 2px; }
+    .bodyContainer { display:flex;flex-direction:column;height:100vh; padding: 10px 15px; box-sizing: border-box; }
+    #messageLog {
+      margin-bottom: 4px;
+      border: 1px solid #ccc;
+      padding: 10px;
+      height: 300px;
+      overflow-y:scroll;
+      flex-grow: 1;
+    }
+    #messageLog div { padding-bottom: 8px; }
+    #messageLog div .userName { font-weight: bold; padding-right: 4px; display: inline-block; text-transform: capitalize; }
+  </style>
+</head>
+<body>
+  <div class="bodyContainer">
+    <h1>AI Chat</h1>
+    <div id="messageLog"></div>
+    <div style="display:flex; padding-right:19px;">
+      <input type="text" id="txtMessage" placeholder="Type a message..." style="flex-grow: 1; margin-right: 5px;">
+      <button id="btnSend">Send</button>
+    </div>
+  </div>
+
+  <script>
+    var ws = new WebSocket('ws://'+window.location.host);
+
+    ws.onmessage = function(event){
+      var chatBox = document.getElementById('messageLog');
+      var strData = event.data || '';
+      var jsonData = null;
+      try {
+        jsonData = JSON.parse(strData);
+      }
+      catch(ex){}
+      var logElem = document.createElement('div');
+      if(jsonData){
+        logUser = document.createElement('span');
+        logUser.classList.add('userName');
+        logUser.textContent = jsonData.user + ':';
+        logText = document.createElement('span');
+        if(jsonData.format=='pre'){
+          logText.textContent = jsonData.text.replace(/ /g,' ');
+          logText.innerHTML = logText.innerHTML.replace(/\n/g,'<br/>');//.replace(/ /g,'&nbsp;');
+          logText.style = 'font-family:monospace;white-space: preserve;';
+        }
+        else{
+          logText.textContent = jsonData.text;
+          logText.innerHTML = logText.innerHTML.replace(/\n/g,'<br/>');
+        }
+        logElem.appendChild(logUser);
+        logElem.appendChild(logText);
+      }
+      else {
+        logElem.textContent = strData;
+      }
+      chatBox.appendChild(logElem);
+      chatBox.scrollTop = chatBox.scrollHeight;
+    };
+
+    document.getElementById('btnSend').onclick = function(){
+      var input = document.getElementById('txtMessage');
+      var message = input.value;
+      ws.send(message);
+      input.value = '';
+    };
+
+    document.getElementById('txtMessage').onkeypress = function(event){
+      var obj = document.getElementById('txtMessage');
+      if (event.key == 'Enter') {
+        ws.send(obj.value);
+        obj.value = '';
+      }
+    };
+
+    document.getElementById('txtMessage').focus();
+  </script>
+</body>
+</html>
